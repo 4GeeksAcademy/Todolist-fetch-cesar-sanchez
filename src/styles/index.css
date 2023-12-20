@@ -10,3 +10,6 @@
     import 'relative/path/to/stylesheet.scss';
 
 */
+.lista{
+    list-style-type:none;
+}

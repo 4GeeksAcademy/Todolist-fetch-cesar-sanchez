@@ -14,8 +14,8 @@ const Home = () => {
  useEffect(() => {
     // Llama a la función para obtener el usuario
   
-    //CreateUsuario();
-    ObtenerTareas();
+  
+    obtenerTareas();
     
     
   }, []);
@@ -24,7 +24,7 @@ const Home = () => {
 
   
 
- function CreateUsuario(){
+ function createUsuario(){
     fetch('https://playground.4geeks.com/apis/fake/todos/user/cesar86', {
       method: "POST",
       body: JSON.stringify([]),
@@ -34,9 +34,7 @@ const Home = () => {
     })
     .then(resp => {
          // Será true (verdad) si la respuesta es exitosa.
-        if(resp.status === 400) {
-          ObtenerTareas()
-        } 
+        
          // Intentará devolver el resultado exacto como cadena (string)
         return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
     })
@@ -50,14 +48,16 @@ const Home = () => {
     });
   }
 
- function ObtenerTareas(){
+ function obtenerTareas(){
     fetch('https://playground.4geeks.com/apis/fake/todos/user/cesar86') 
       
      
     
     .then(resp => {
         console.log(resp.ok); // Será true (verdad) si la respuesta es exitosa.
-        console.log(resp.status); // el código de estado = 200 o código = 400 etc.
+        if(resp.status === 404) {
+          createUsuario()
+        }  // el código de estado = 200 o código = 400 etc.
        // console.log(resp.text()); // Intentará devolver el resultado exacto como cadena (string)
         return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
     })
@@ -74,14 +74,10 @@ const Home = () => {
     });
 
   }
-  function ActualizarTareas(){
+  function actualizarTareas(nuevaLista){
     fetch('https://playground.4geeks.com/apis/fake/todos/user/cesar86', {
       method: "PUT",
-      body:JSON.stringify([
-        { label: "Make the bed", done: false },
-        { label: "Walk the dog", done: false },
-        { label: "Do the replits", done: false }
-    ])
+      body:JSON.stringify(nuevaLista)
 ,
       headers: {
         "Content-Type": "application/json"
@@ -101,6 +97,7 @@ const Home = () => {
         //manejo de errores
         console.log(error);
     });
+    
 
   }
   
@@ -118,26 +115,23 @@ const Home = () => {
     function handleadd(event) {
       let aux=[];
       if (event.key === "Enter") {
-          setAdd([...add, { label: tarea, done: false }]);
-          //const nuevosDatos = [...prevadd, { label: tarea, done: false }];
-          
-        
+          setAdd([...add, { label: tarea, done: false }]); 
         aux=[...add, { label: tarea, done: false }];
-       // ActualizarTareas(aux);
-        
+        actualizarTareas(aux);
+        setTarea("");
+    
       };
-      setTarea("");
+      
     }
       
     
-
-
 	function deleteAdd (item) {
 			setAdd((prevState) =>
 			  prevState.filter((e,index) => index !== item)
 			  
 			)
 		}
+
   function eliminarLista() {
       fetch("https://playground.4geeks.com/apis/fake/todos/user/cesar86", {
         method: "DELETE",
@@ -158,21 +152,21 @@ const Home = () => {
 	}
 	
   return (
-    <div style={{backgroundColor:"blue"}}>
-        <div className="w-50 mx-auto"style={{backgroundColor:"yellowgreen"}}>
+    <div className="bg-primary">
+        <div className="w-50 mx-auto bg-warning">
             <h1>Todos</h1>
             <input type="text" className="form-control" aria-label="Large" value={tarea} onChange={handletarea} onKeyUp={handleadd}/>
-            <ul style={{ ListStyleType:"none", display:"flex", flexDirection:"column",gap:"10px"}}>
+            <ul className="lista d-flex flex-column gap-3">
                 {add.length > 0 ? add.map((item, index) => (
-                    <li key={index} style={{ fontWeight:"700",display:"flex", justifyContent:"space-between" ,alignItems:"center"}}onMouseEnter={()=> mouseOn(index)} onMouseLeave={mouseOff}>
+                    <li key={index} className="fw-bold d-flex justify-content-between alignItems-center" onMouseEnter={()=> mouseOn(index)} onMouseLeave={mouseOff}>
                         <span>{item.label}</span>
-                        <span style={{ display: hoverIndex === index ? visible :"none"}}  onClick={() => deleteAdd(index)}>X</span>
+                        <span className= "display: hoverIndex === index ? visible :none "  onClick={() => deleteAdd(index)}>X</span>
                     </li>
                 )) : <p>No hay tareas </p>  
                 }
             </ul>
             <button onClick={eliminarLista}>Elimina lista completa</button>
-            <span style={{backgroundColor:"yellow"}}> {add.length} items left</span>
+            <span className="bg-danger"> {add.length} items left</span>
         </div>
     </div>
 );
