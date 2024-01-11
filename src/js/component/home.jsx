@@ -125,12 +125,11 @@ const Home = () => {
     }
       
     
-	function deleteAdd (item) {
-			setAdd((prevState) =>
-			  prevState.filter((e,index) => index !== item)
-			  
-			)
-		}
+    function deleteAdd(item) {
+      const listaActualizada = add.filter((_, index) => index !== item);
+      setAdd(listaActualizada);
+      actualizarTareas(listaActualizada);
+    }
 
   function eliminarLista() {
       fetch("https://playground.4geeks.com/apis/fake/todos/user/cesar86", {
